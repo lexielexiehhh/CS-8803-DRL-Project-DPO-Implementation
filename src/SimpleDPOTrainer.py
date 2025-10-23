@@ -8,12 +8,20 @@ from typing import Any, Dict, Optional
 import torch
 import torch.nn.functional as F
 
+# Simple DPO Trainer
+# What a trainer should do:
+# 1. Get the data from the dataset
+# 2. Prepare the data for the model(see collator)
+# 3. Start gradient descent loop, where
+#    a. Compute the loss
+#    b. Update the model
+# 4. Save the model
 class MyDPOTrainer(Trainer):
     def __init__(self, *args, ref_model: Optional[torch.nn.Module] = None, beta: float = 0.1, **kwargs):
         """
         Minimal DPO-capable Trainer.
 
-        Expected batch keys (produced by your collator/dataset):
+        Expected batch keys (produced by collator):
           - 'chosen_input_ids', 'chosen_attention_mask', 'chosen_response_mask'
           - 'rejected_input_ids', 'rejected_attention_mask', 'rejected_response_mask'
         """
@@ -22,7 +30,7 @@ class MyDPOTrainer(Trainer):
         # Beta controls DPO strength
         self.beta: float = float(beta)
 
-        # Reference model: frozen copy of policy by default
+        # Reference model: frozen copy of policy by default, if not provided, use a deepcopy of the policy model
         if ref_model is None:
             self.ref_model = copy.deepcopy(self.model)
         else:
@@ -32,14 +40,6 @@ class MyDPOTrainer(Trainer):
         for param in self.ref_model.parameters():
             param.requires_grad = False
         self.ref_model.eval()
-
-    def get_train_dataloader(self):
-        return super().get_train_dataloader()
-
-    def _ensure_ref_device(self) -> None:
-        # Keep ref model on the same device as policy
-        if next(self.ref_model.parameters()).device != next(self.model.parameters()).device:
-            self.ref_model.to(self.model.device)
 
     @staticmethod
     def _shifted_token_logprobs(logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
