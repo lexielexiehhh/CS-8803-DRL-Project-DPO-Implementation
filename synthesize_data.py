@@ -73,24 +73,17 @@ def synthesize_data():
             pad_token_id=tokenizer.pad_token_id
         )
         
-        # <--- BUG 修复从这里开始 ---
 
-        # 'completions_full_text' 包含了 (Prompt + Completion)
-        # 例子: ["I rented... I AM LITTLE BUT..."]
         completions_full_text = tokenizer.batch_decode(outputs, skip_special_tokens=True)
         
-        # 'completions_only_y' 只包含 (Completion)
-        # 我们用 Python slice [len(prompt_text):] 来“切掉” Prompt
-        # 例子: [" I AM LITTLE BUT..."]
         completions_only_y = [text[len(prompt_text):] for text in completions_full_text]
 
-        # 5b. 打分
-        # 我们把*完整*的 (Prompt + Completion) 喂给“裁判”，这样打分更准
+        # scoring (prompt + completion)
         valid_texts_for_scoring = []
         valid_completions_only_y = []
         
         for full_text, comp_only in zip(completions_full_text, completions_only_y):
-            # 过滤掉那些太短或奇怪的续写
+            # filter out too short or strange completions
             if len(comp_only.strip()) > 5: 
                 valid_texts_for_scoring.append(full_text)
                 valid_completions_only_y.append(comp_only)
