@@ -1,0 +1,87 @@
+_wandb:
+    value:
+        cli_version: 0.22.2
+        e:
+            gz33w6281yp6u0pclcwbgdnb3vksjbxq:
+                apple:
+                    ecpuCores: 6
+                    gpuCores: 10
+                    memoryGb: 16
+                    name: Apple M4
+                    pcpuCores: 4
+                    ramTotalBytes: "17179869184"
+                    swapTotalBytes: "7516192768"
+                codePath: src/train.py
+                codePathLocal: src/train.py
+                cpu_count: 10
+                cpu_count_logical: 10
+                disk:
+                    /:
+                        total: "245107195904"
+                        used: "240255078400"
+                email: labitojia@gmail.com
+                executable: /Users/shimin/.pyenv/versions/3.12.10/bin/python
+                git:
+                    commit: bd976f92cf88656c7e0922c5ae2fedb5a1b9ea7e
+                    remote: git@github.com:lexielexiehhh/CS-8803-DRL-Project-DPO-Implementation.git
+                host: GooseMacdeMacBook-Air.local
+                memory:
+                    total: "17179869184"
+                os: macOS-15.6-arm64-arm-64bit
+                program: /Users/shimin/Desktop/Repos/CS-8803-DRL-Project-DPO-Implementation/src/train.py
+                python: CPython 3.12.10
+                root: /Users/shimin/Desktop/Repos/CS-8803-DRL-Project-DPO-Implementation
+                startedAt: "2025-10-23T19:09:30.787516Z"
+                writerId: gz33w6281yp6u0pclcwbgdnb3vksjbxq
+        m: []
+        python_version: 3.12.10
+        t:
+            "1":
+                - 1
+                - 5
+                - 11
+                - 49
+                - 51
+                - 53
+                - 71
+                - 84
+                - 95
+                - 98
+            "2":
+                - 1
+                - 5
+                - 11
+                - 49
+                - 51
+                - 53
+                - 71
+                - 84
+                - 95
+                - 98
+            "3":
+                - 16
+            "4": 3.12.10
+            "5": 0.22.2
+            "6": 4.57.1
+            "12": 0.22.2
+            "13": darwin-arm64
+lora_alpha:
+    value: 16
+lora_dropout:
+    value: 0.05
+lora_r:
+    value: 8
+lora_target_modules:
+    value: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+max_length:
+    value: 1024
+model_name:
+    value: Qwen/Qwen2.5-0.5B-Instruct
+output_dir:
+    value: outputs
+tokenizer_name:
+    value: Qwen/Qwen2.5-0.5B-Instruct
+train_dataset_path:
+    value: data/train.json
+use_lora:
+    value: true

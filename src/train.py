@@ -7,8 +7,12 @@ import argparse
 import torch
 import wandb
 
+show_local_log = True
+use_wandb = True
+
 def local_log(in_log: str):
-    print(in_log)
+    if show_local_log:
+        print(in_log)
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -22,6 +26,9 @@ def parse_args():
     parser.add_argument("--lora_r", type=int, default=8)
     parser.add_argument("--lora_alpha", type=int, default=16)
     parser.add_argument("--lora_dropout", type=float, default=0.05)
+    # logging args
+    parser.add_argument("--use_wandb", action="store_true", default=True)
+    parser.add_argument("--show_local_log", action="store_true", default=True)
     # Comma-separated module name substrings to target
     parser.add_argument(
         "--lora_target_modules",
@@ -45,7 +52,13 @@ def add_lora_to_model(model, args):
 
 def main():
     args = parse_args()
-    wandb.init(project="8803DRL-dpo-implementation", config=args)
+    global show_local_log, use_wandb
+    show_local_log = args.show_local_log
+    use_wandb = args.use_wandb
+    if use_wandb:
+        wandb.init(project="8803DRL-dpo-implementation", config=args)
+    else:
+        local_log(f"Wandb is disabled")
     model = AutoModelForCausalLM.from_pretrained(
         args.model_name,
         trust_remote_code=True,
@@ -97,10 +110,12 @@ def main():
     local_log(f"Starting training")
     trainer.train()
     local_log(f"Training completed")
-    wandb.finish()
+    if use_wandb:
+        wandb.finish()
     trainer.save_model("dpo_model")
     local_log(f"Model saved to dpo_model")
-    wandb.log({
+    if use_wandb:
+        wandb.log({
         "train_loss": trainer.state.loss,
         "train_epoch": trainer.state.epoch,
         "train_step": trainer.state.step,

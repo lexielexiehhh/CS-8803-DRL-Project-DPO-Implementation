@@ -1,0 +1,37 @@
+{
+  "os":  "macOS-15.6-arm64-arm-64bit",
+  "python":  "CPython 3.12.10",
+  "startedAt":  "2025-10-23T19:09:30.787516Z",
+  "program":  "/Users/shimin/Desktop/Repos/CS-8803-DRL-Project-DPO-Implementation/src/train.py",
+  "codePath":  "src/train.py",
+  "codePathLocal":  "src/train.py",
+  "git":  {
+    "remote":  "git@github.com:lexielexiehhh/CS-8803-DRL-Project-DPO-Implementation.git",
+    "commit":  "bd976f92cf88656c7e0922c5ae2fedb5a1b9ea7e"
+  },
+  "email":  "labitojia@gmail.com",
+  "root":  "/Users/shimin/Desktop/Repos/CS-8803-DRL-Project-DPO-Implementation",
+  "host":  "GooseMacdeMacBook-Air.local",
+  "executable":  "/Users/shimin/.pyenv/versions/3.12.10/bin/python",
+  "cpu_count":  10,
+  "cpu_count_logical":  10,
+  "disk":  {
+    "/":  {
+      "total":  "245107195904",
+      "used":  "240255078400"
+    }
+  },
+  "memory":  {
+    "total":  "17179869184"
+  },
+  "apple":  {
+    "name":  "Apple M4",
+    "ecpuCores":  6,
+    "pcpuCores":  4,
+    "gpuCores":  10,
+    "memoryGb":  16,
+    "swapTotalBytes":  "7516192768",
+    "ramTotalBytes":  "17179869184"
+  },
+  "writerId":  "gz33w6281yp6u0pclcwbgdnb3vksjbxq"
+}
