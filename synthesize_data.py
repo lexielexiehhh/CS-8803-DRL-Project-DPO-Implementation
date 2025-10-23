@@ -10,7 +10,7 @@ MODEL_NAME = "gpt2"
 CLASSIFIER_NAME = "distilbert-base-uncased-finetuned-sst-2-english"
 NUM_PROMPTS = 100
 NUM_COMPLETIONS_PER_PROMPT = 4
-OUTPUT_FILE = "dpo_dataset.jsonl"
+OUTPUT_FILE = "data/dpo_dataset.jsonl"
 
 
 def synthesize_data():

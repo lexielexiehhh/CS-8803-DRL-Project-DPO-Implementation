@@ -18,7 +18,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_name", type=str, default="Qwen/Qwen2.5-0.5B-Instruct")
     parser.add_argument("--tokenizer_name", type=str, default="Qwen/Qwen2.5-0.5B-Instruct")
-    parser.add_argument("--train_dataset_path", type=str, default="data/test_data.jsonl")
+    parser.add_argument("--train_dataset_path", type=str, default="data/dpo_dataset.jsonl")
     parser.add_argument("--max_length", type=int, default=1024)
     parser.add_argument("--output_dir", type=str, default="outputs")
     # LoRA args (enabled by default)
@@ -27,8 +27,9 @@ def parse_args():
     parser.add_argument("--lora_alpha", type=int, default=16, help="LoRA alpha, no need to change for now")
     parser.add_argument("--lora_dropout", type=float, default=0.05, help="LoRA dropout, no need to change for now")
     # logging args
-    parser.add_argument("--use_wandb", action="store_true", default=True, help="Use wandb for logging")
-    parser.add_argument("--show_local_log", action="store_true", default=True, help="Show local log")
+    parser.add_argument("--use_wandb", action=argparse.BooleanOptionalAction, default=True, help="Use wandb for logging")
+    parser.add_argument("--show_local_log", action=argparse.BooleanOptionalAction, default=True, help="Show local log")
+    parser.add_argument("--local_show_loss", action=argparse.BooleanOptionalAction, default=True, help="Show loss in local log")
     # Comma-separated module name substrings to target
     parser.add_argument(
         "--lora_target_modules",
@@ -63,8 +64,8 @@ def main():
     global show_local_log, use_wandb
     show_local_log = args.show_local_log
     use_wandb = args.use_wandb
-    # Initialize wandb
     if use_wandb:
+        LOCAL_LOG(f"Initializing wandb")
         wandb.init(project="8803DRL-dpo-implementation", config=args)
     else:
         LOCAL_LOG(f"Wandb is disabled")
@@ -97,7 +98,7 @@ def main():
     train_dataset = load_dataset("json", data_files={"train": args.train_dataset_path})["train"]
     collator = DPOPairwiseCollator(tokenizer, max_length=args.max_length)
     LOCAL_LOG(f"Collator created")
-    args = TrainingArguments(
+    train_args = TrainingArguments(
         output_dir="outputs",
         per_device_train_batch_size=1,
         gradient_accumulation_steps=2,
@@ -116,10 +117,11 @@ def main():
         tokenizer=tokenizer,
         train_dataset=train_dataset,
         data_collator=collator,
-        args=args,
+        args=train_args,
     )
     LOCAL_LOG(f"Trainer created")
-    # trainer.register_callback_functions(on_loss_computed) # dumb local log on loss, use wandb instead
+    if args.local_show_loss:
+        trainer.register_callback_functions(on_loss_computed)
     LOCAL_LOG(f"Starting training")
     trainer.train()
     LOCAL_LOG(f"Training completed")
@@ -138,11 +140,5 @@ def main():
                 "step": last_with_loss.get("step", trainer.state.global_step),
             })
         wandb.finish()
-    # if use_wandb:
-    #     wandb.log({
-    #     "train_loss": trainer.state.loss,
-    #     "train_epoch": trainer.state.epoch,
-    #     "train_step": trainer.state.step,
-    # })
 if __name__ == "__main__":
     main()
