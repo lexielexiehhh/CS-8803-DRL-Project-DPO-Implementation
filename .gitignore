@@ -207,3 +207,7 @@ marimo/_lsp/
 __marimo__/
 
 *.jsonl
+
+dpo_model/
+outputs/
+wandb/

@@ -7,7 +7,7 @@ import copy
 from typing import Any, Dict, Optional
 import torch
 import torch.nn.functional as F
-
+from typing import Callable
 # Simple DPO Trainer
 # What a trainer should do:
 # 1. Get the data from the dataset
@@ -40,6 +40,28 @@ class MyDPOTrainer(Trainer):
         for param in self.ref_model.parameters():
             param.requires_grad = False
         self.ref_model.eval()
+        # Optional external loss callback
+        self._external_on_loss = None
+
+    def register_callback_functions(self, on_loss_computed: Callable[[float], None]):
+        self._external_on_loss = on_loss_computed
+
+    def on_loss_computed(self, loss):
+        cb = getattr(self, "_external_on_loss", None)
+        if cb is not None:
+            try:
+                cb(loss)
+            except Exception:
+                pass
+
+    def _ensure_ref_device(self):
+        try:
+            model_device = next(self.model.parameters()).device
+            ref_device = next(self.ref_model.parameters()).device
+            if ref_device != model_device:
+                self.ref_model.to(model_device)
+        except StopIteration:
+            return
 
     @staticmethod
     def _shifted_token_logprobs(logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
@@ -85,7 +107,14 @@ class MyDPOTrainer(Trainer):
         logits = self.beta * (delta_pi - delta_ref)
         return F.softplus(-logits).mean()  # -log(sigmoid(logits))
 
-    def compute_loss(self, model, inputs: Dict[str, torch.Tensor], return_outputs: bool = False):
+    def compute_loss(
+        self,
+        model,
+        inputs: Dict[str, torch.Tensor],
+        return_outputs: bool = False,
+        num_items_in_batch: Optional[int] = None,
+        **kwargs,
+    ):
         # Ensure devices
         self._ensure_ref_device()
 
@@ -112,6 +141,13 @@ class MyDPOTrainer(Trainer):
             logp_r_ref = self._compute_response_logps(self.ref_model, r_ids, r_attn, r_resp)
 
         loss = self._dpo_loss(logp_c_pi, logp_r_pi, logp_c_ref, logp_r_ref)
+
+        # Log loss for HF Trainer (picked up by report_to) and optional external callback
+        try:
+            self.log({"loss": loss.detach().item()})
+        except Exception:
+            pass
+        self.on_loss_computed(loss.detach())
 
         if return_outputs:
             outputs: Dict[str, Any] = {

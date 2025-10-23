@@ -14,4 +14,10 @@ Install dependencies:
 To synthesize the preference dataset, run:
 `python synthesize_data.py`
 
+## 3. Train
+To train, run:
+`python src/train.py`
+
+Custom arguments and configurations can be found in the file.
+
 This will generate a file named `dpo_dataset.jsonl`.
