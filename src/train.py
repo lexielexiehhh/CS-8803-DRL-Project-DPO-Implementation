@@ -29,7 +29,7 @@ def parse_args():
     # logging args
     parser.add_argument("--use_wandb", action=argparse.BooleanOptionalAction, default=True, help="Use wandb for logging")
     parser.add_argument("--show_local_log", action=argparse.BooleanOptionalAction, default=True, help="Show local log")
-    parser.add_argument("--local_show_loss", action=argparse.BooleanOptionalAction, default=True, help="Show loss in local log")
+    parser.add_argument("--local_show_loss", action=argparse.BooleanOptionalAction, default=False, help="Show loss in local log")
     # Comma-separated module name substrings to target
     parser.add_argument(
         "--lora_target_modules",
