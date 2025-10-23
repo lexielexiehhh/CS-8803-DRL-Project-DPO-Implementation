@@ -1,13 +1,13 @@
 # A custom DPO trainer
 
 from transformers import Trainer, TrainingArguments
-from trl import SFTTrainer, DPOTrainer
 from typing import List
 import copy
 from typing import Any, Dict, Optional
 import torch
 import torch.nn.functional as F
 from typing import Callable
+
 # Simple DPO Trainer
 # What a trainer should do:
 # 1. Get the data from the dataset

@@ -22,13 +22,13 @@ def parse_args():
     parser.add_argument("--max_length", type=int, default=1024)
     parser.add_argument("--output_dir", type=str, default="outputs")
     # LoRA args (enabled by default)
-    parser.add_argument("--use_lora", action="store_true", default=True)
-    parser.add_argument("--lora_r", type=int, default=8)
-    parser.add_argument("--lora_alpha", type=int, default=16)
-    parser.add_argument("--lora_dropout", type=float, default=0.05)
+    parser.add_argument("--use_lora", action="store_true", default=True, help="Use LoRA for training because it's faster")
+    parser.add_argument("--lora_r", type=int, default=8, help="LoRA rank, no need to change for now")
+    parser.add_argument("--lora_alpha", type=int, default=16, help="LoRA alpha, no need to change for now")
+    parser.add_argument("--lora_dropout", type=float, default=0.05, help="LoRA dropout, no need to change for now")
     # logging args
-    parser.add_argument("--use_wandb", action="store_true", default=True)
-    parser.add_argument("--show_local_log", action="store_true", default=True)
+    parser.add_argument("--use_wandb", action="store_true", default=True, help="Use wandb for logging")
+    parser.add_argument("--show_local_log", action="store_true", default=True, help="Show local log")
     # Comma-separated module name substrings to target
     parser.add_argument(
         "--lora_target_modules",
@@ -63,10 +63,13 @@ def main():
     global show_local_log, use_wandb
     show_local_log = args.show_local_log
     use_wandb = args.use_wandb
+    # Initialize wandb
     if use_wandb:
         wandb.init(project="8803DRL-dpo-implementation", config=args)
     else:
         LOCAL_LOG(f"Wandb is disabled")
+
+    # Load model and tokenizer
     model = AutoModelForCausalLM.from_pretrained(
         args.model_name,
         trust_remote_code=True,
@@ -88,7 +91,6 @@ def main():
         model.resize_token_embeddings(len(tokenizer))
 
     # trying to minize running time, so lora is used by default    
-    # Optionally apply LoRA to reduce trainable parameters
     if args.use_lora:
         model = add_lora_to_model(model, args)
     LOCAL_LOG(f"LoRA applied to model")
