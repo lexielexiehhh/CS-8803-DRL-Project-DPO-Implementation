@@ -2,3 +2,4 @@ torch
 transformers
 datasets
 tqdm
+trl
