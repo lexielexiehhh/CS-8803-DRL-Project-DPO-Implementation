@@ -125,9 +125,13 @@ class MyDPOTrainer(Trainer):
         return loss
 
     def train(self, *args, **kwargs):
-        # Defer to base Trainer for the loop; our compute_loss implements DPO
+        # No change here, just call the base trainer's train method
         return super().train(*args, **kwargs)
 
+
+# A collator that prepares the data for the model
+# Input: a list of prompts and a list of chosen and rejected responses
+# Output: a dictionary with the input_ids, attention_mask, and response_mask
 class DPOPairwiseCollator:
     def __init__(self, tokenizer, max_length: int = 1024):
         self.tokenizer = tokenizer
