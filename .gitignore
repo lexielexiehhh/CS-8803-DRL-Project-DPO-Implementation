@@ -211,3 +211,5 @@ __marimo__/
 dpo_model/
 outputs/
 wandb/
+
+.DS_Store
