@@ -1,4 +1,4 @@
-from SimpleDPOTrainer import MyDPOTrainer, DPOPairwiseCollator
+from simple_dpo_trainer import MyDPOTrainer, DPOPairwiseCollator
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from peft import LoraConfig, get_peft_model
 from datasets import load_dataset

@@ -213,3 +213,6 @@ outputs/
 wandb/
 
 .DS_Store
+
+models/
+data/
