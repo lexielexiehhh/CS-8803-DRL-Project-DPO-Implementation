@@ -3,9 +3,12 @@
 This repository contains our implementation and experiments for Direct Preference Optimization (DPO) for CS 8803 Deep Reinforcement Learning.  
 The workflow mirrors the steps documented in `final_main.ipynb`.
 
-## 0. Hardware requirement
+## 0. Prerequistis
 
 - A GPU is required.
+- Please download and unzip the data and models first. The `final_main.ipynb` will talk about where to put those files and asserts.
+- Please download preprocessed data from https://drive.google.com/drive/folders/15hqwcZ_TVrvt30Rmw5VLbHCKyQ2Ydhdj?usp=sharing
+- Please download trained models from https://drive.google.com/drive/folders/1aRMeu6YbQQjsO2KWWFND0a3PiQd-0s00?usp=drive_link
 
 ## 1. Setup
 
